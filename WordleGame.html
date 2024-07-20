@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>WordleGame by Amol</title>
+	<style>
+		.container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			background-color: #dad2d2;
+		}
+
+		.board {
+			display: grid;
+			grid-template-columns: repeat(5, 50px);
+			grid-gap: 5px;
+			justify-content: center;
+			margin-top: 20px;
+		}
+
+		.cell {
+			width: 50px;
+			height: 50px;
+			background-color: white;
+			border: 2px solid #000;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 24px;
+		}
+
+		.inputSubmitDiv {
+			margin-top: 20px;
+			padding: 20px;
+
+		}
+
+		.input {
+			font-size: 20px;
+			padding: 5px;
+			border: 2px solid rgb(2, 4, 122);
+		}
+
+		.button {
+
+			font-size: 20px;
+			padding: 5px;
+
+		}
+
+		.result {
+			margin-bottom: 1cm;
+			font-size: 30px;
+
+		}
+	</style>
+</head>
+
+<body>
+	<div></div>
+
+	<script>
+		const words = [
+    "which", "there", "their", "about", "would", "these", "other", "words", "could", "write", "first", "water", 
+    "after", "where", "right", "think", "three", "years", "place", "sound", "great", "again", "still", "every", 
+    ]
+
+
+let container = document.querySelector('div');
+container.classList.add('container');
+
+let heading = document.createElement('h1');
+heading.textContent = "Wordle Game";
+container.appendChild(heading);
+
+let board = document.createElement('div');
+board.classList.add('board');
+container.appendChild(board);
+
+const boardSize = 5;
+let currentRow = 0;
+
+for (let i = 0; i < boardSize * 6; i++) {
+    let cell = document.createElement('div');
+    cell.classList.add('cell');
+    board.appendChild(cell);
+}
+
+let inputSubmitDiv = document.createElement('div');
+inputSubmitDiv.classList.add('inputSubmitDiv');
+container.appendChild(inputSubmitDiv);
+
+let input = document.createElement('input');
+input.type = 'text';
+input.placeholder = 'Enter your guess';
+input.classList.add('input');
+inputSubmitDiv.appendChild(input);
+
+let button = document.createElement('button');
+button.classList.add('button');
+button.textContent = 'Submit Guess';
+inputSubmitDiv.appendChild(button);
+
+let resetButton=document.createElement('button');
+resetButton.textContent="Reset Board";
+container.appendChild(resetButton);
+resetButton.addEventListener('click',()=> resetBoard());
+
+let result=document.createElement('div');
+result.classList.add('result');
+container.appendChild(result);
+
+button.addEventListener('click', () => {
+    let guess = input.value.toLowerCase();
+    if (guess.length === 5) {
+        input.value = ""; 
+        updateBoard(guess);
+    } else {
+        alert('Please enter a 5-letter word.');
+    }
+});
+
+let resetBoard = ()=> {
+    let cells = board.querySelectorAll('.cell');
+    cells.forEach(cell => {
+        cell.textContent = '';
+        cell.style.backgroundColor = '';
+    });
+    currentRow = 0;
+    result.textContent="";
+    targetWord = selectRandomWord();
+    console.log("New Target Word:", targetWord);
+}
+
+let selectRandomWord = ()=> {
+    let randomIndex = Math.floor(Math.random() * words.length);
+    return words[randomIndex];
+}
+
+let targetWord = selectRandomWord();
+console.log("Target Word:", targetWord);
+
+let updateBoard =(guess)=> {
+
+    let wordArray = Array.from(targetWord);
+    let guessArray = Array.from(guess);
+    let cells = board.querySelectorAll('.cell');
+
+    
+    for (let i = 0; i < boardSize; i++) {
+        let cell = cells[currentRow * boardSize + i];
+        let letter = guessArray[i];
+        if (letter === wordArray[i]) {
+            cell.style.backgroundColor = 'green'; 
+        } else if (wordArray.includes(letter)) {
+            cell.style.backgroundColor = 'yellow'; 
+        } else {
+            cell.style.backgroundColor = 'gray';
+        }
+        cell.textContent = letter.toUpperCase(); 
+    }
+
+    if (guess === targetWord) {
+        result.textContent="Congratulation! You guessed the word.";
+        result.style.color="green";
+    } else {
+        currentRow++;
+        if (currentRow === 6) {
+            result.textContent=`Game over! The correct word was: ${targetWord}`;
+            result.style.color="red";
+        }
+    }
+
+}
+
+	</script>
+</body>
+
+</html>
